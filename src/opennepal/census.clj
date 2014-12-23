@@ -1,13 +1,11 @@
 (ns opennepal.census
-  (:require [clojure.data.csv :as csv]
-            [clojure.java.io :as io]
-            [cheshire.core :as json]))
+  (:require
+    [opennepal.core :refer :all]))
 
 (def url "http://data.opennepal.net/sites/all/modules/pubdlcnt/pubdlcnt.php?file=http://data.opennepal.net/sites/default/files/resources/Population.csv&nid=151")
+
 ;; "./resources/census.csv"
-(def data (with-open [in-file (io/reader url)]
-            (doall
-              (csv/read-csv in-file))))
+(def csv-data (read-csv url))
 
 ;; finds digits in a string anc converts it into number
 (defn parse-int [s]
@@ -40,67 +38,6 @@
             dist-map (district-map yr dist m-cnt f-cnt h-cnt)]
         (recur (conj acc-s dist-map) more)))))
 
-(def census-data (census-map (into [] (rest data))))
+(def census-data (census-map (into [] (rest csv-data))))
 
-(json/generate-stream census-data (io/writer "./resources/census.json"))
-
-;; death or missing
-(def url-link "http://data.opennepal.net/sites/all/modules/pubdlcnt/pubdlcnt.php?file=http://data.opennepal.net/sites/default/files/resources/Missing%20and%20dead%20person_0.csv&nid=4501")
-
-(def insurg-data (with-open [in-file (io/reader "./resources/conflict.csv")]
-                   (doall
-                     (csv/read-csv in-file))))
-
-;; dd/mm/yyyy
-(defn date-map
-  [date-str]
-  (let [ss (clojure.string/split date-str #"/")
-        [d m y] ss]
-    (if (= 3 (count ss))
-      {:day (parse-int d) :month (parse-int m) :year (parse-int y)}
-      {:day nil :month nil :year nil}
-
-      )))
-
-(defn r-map
-  [[dead-or-missing
-    district
-    name
-    gender
-    date-of-birth
-    _
-    place-of-birth
-    father-name
-    date-of-disappear
-    _
-    place-of-disappear
-    district-of-disappear
-    :as v]]
-  {:dead-or-missing       dead-or-missing
-   :district              district
-   :name                  name
-   :gender                gender
-   :date-of-birth         (date-map date-of-birth)
-   :place-of-birth        place-of-birth
-   :father-name           father-name
-   :date-of-disappear     (date-map date-of-disappear)
-   :place-of-disappear    {:district district-of-disappear :place place-of-disappear}})
-
-(defn coll-map
-  ([sv] (coll-map [] sv))
-  ([acc-sv sv]
-    (if (empty? sv)
-      acc-sv
-      (let [[x & more] sv]
-        (recur (conj acc-sv (r-map x)) more)))))
-
-(def conflict-data (coll-map (into [] (rest insurg-data))))
-
-(json/generate-stream conflict-data (io/writer "./resources/conflict.json"))
-
-
-
-
-
-
-
+(json-to-file census-data "./resources/census.json")
