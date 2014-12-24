@@ -10,6 +10,6 @@
     (doall
       (csv/read-csv in-file))))
 
-(defn json-to-file
+(defn save-as-json
   [data dest]
   (json/generate-stream data (io/writer dest)))

@@ -8,13 +8,10 @@
 
 (def url "http://data.opennepal.net/sites/all/modules/pubdlcnt/pubdlcnt.php?file=http://data.opennepal.net/sites/default/files/resources/Missing%20and%20dead%20person_0.csv&nid=4501")
 
-;; conflict csv data
-(def csv-data (read-csv "./resources/conflict.csv"))
-
 (defn parse-int
   "Finds digits in a string and converts it into number."
-  [s]
-  (let [d (re-find #"\d+" s)]
+  [str]
+  (let [d (re-find #"\d+" str)]
     (if (nil? d)
       0
       (Integer. d))))
@@ -28,7 +25,7 @@
       {:day (parse-int d) :month (parse-int m) :year (parse-int y)}
       {:day nil :month nil :year nil})))
 
-(defn r-map
+(defn details-map
   "Creates a map to represent a dead/missing record."
   [[dead-or-missing
     district
@@ -53,15 +50,15 @@
    :date-of-disappear  (date-map date-of-disappear)
    :place-of-disappear {:district district-of-disappear :place place-of-disappear}})
 
-(defn coll-map
-  ([sv] (coll-map [] sv))
-  ([acc-sv sv]
-    (if (empty? sv)
-      acc-sv
-      (let [[x & more] sv]
-        (recur (conj acc-sv (r-map x)) more)))))
+(defn read-conflics
+  [csv]
+  (let [raw-data (into [] (read-csv csv))]
+    (letfn [(extract [acc data]
+                     (if (empty? data)
+                       acc
+                       (let [[x & more] data]
+                         (recur (conj acc (details-map x)) more))))]
+      (extract [] raw-data))))
 
-;; final map containing all data
-(def conflict-data (coll-map (into [] (rest csv-data))))
+(save-as-json (read-conflics "./resources/conflict.csv") "./resources/conflict.json")
 
-(json-to-file conflict-data "./resources/conflict.json")

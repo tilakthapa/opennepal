@@ -40,4 +40,4 @@
 
 (def census-data (census-map (into [] (rest csv-data))))
 
-(json-to-file census-data "./resources/census.json")
+(save-as-json census-data "./resources/census.json")

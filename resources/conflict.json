@@ -1,5 +1,27 @@
 [{
 	"place-of-disappear": {
+		"district": "District of disapperance",
+		"place": "Place of disapperance"
+	},
+	"name": "Full Name",
+	"date-of-birth": {
+		"day": null,
+		"month": null,
+		"year": null
+	},
+	"date-of-disappear": {
+		"day": null,
+		"month": null,
+		"year": null
+	},
+	"father-name": "Father'S Name",
+	"dead-or-missing": "Missing/Dead",
+	"gender": "Gender",
+	"place-of-birth": "Place Of Birth",
+	"district": "District"
+},
+{
+	"place-of-disappear": {
 		"district": "Doti",
 		"place": "Dipayal"
 	},
