@@ -1,6 +1,6 @@
-# opennepal
+# OpenData - Open Nepal
 
-A Clojure library designed to ... well, that part is up to you.
+http://data.opennepal.net/
 
 ## Usage
 

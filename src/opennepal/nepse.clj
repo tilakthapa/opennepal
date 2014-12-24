@@ -10,7 +10,7 @@
 ;(def data (fetch-url "http://nepalstock.com.np/todaysprice/export"))
 
 ;; headers
-(mapcat :content (html/select data [:tr :th]))
+;(mapcat :content (html/select data [:tr :th]))
 
 (defn fetch-data [url]
   (html/select (fetch-url url) [:tr :td]))
@@ -26,7 +26,7 @@
                        acc
                        (let [[company txn max min closing shares amt prev-closing diff & more] data]
                          (recur (conj acc {:company       company
-                                           :no-of-txn     (into-double txn)
+                                           :txns     (into-double txn)
                                            :max           (into-double max)
                                            :min           (into-double min)
                                            :closing       (into-double closing)
@@ -36,4 +36,5 @@
                                            :diff          (into-double diff)}) more))))]
       (extract [] raw-data))))
 
-(save-as-json (nepse-today "http://nepalstock.com.np/todaysprice/export") "./resources/nepse.json")
+(-> (nepse-today "http://nepalstock.com.np/todaysprice/export")
+    (save-as-json "./resources/nepse.json"))

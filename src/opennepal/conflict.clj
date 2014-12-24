@@ -6,8 +6,6 @@
 ;; Number of missing and dead people at the time of Maoist revolution
 ;; https://www.icrc.org/eng/assets/files/reports/report-missing-persons-nepal-2013-english.pdf
 
-(def url "http://data.opennepal.net/sites/all/modules/pubdlcnt/pubdlcnt.php?file=http://data.opennepal.net/sites/default/files/resources/Missing%20and%20dead%20person_0.csv&nid=4501")
-
 (defn parse-int
   "Finds digits in a string and converts it into number."
   [str]
@@ -60,5 +58,6 @@
                          (recur (conj acc (details-map x)) more))))]
       (extract [] raw-data))))
 
-(save-as-json (read-conflics "./resources/dead_n_missing_during_conflict.csv") "./resources/dead_n_missing_during_conflict.json")
+(-> (read-conflics "./resources/dead_n_missing_during_conflict.csv")
+    (save-as-json "./resources/dead_n_missing_during_conflict.json"))
 

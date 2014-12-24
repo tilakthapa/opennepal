@@ -38,4 +38,30 @@
 
 ;(read-census "./resources/pop_n_household_census_1971_2011.csv")
 
-(save-as-json (read-census "./resources/pop_n_household_census_1971_2011.csv") "./resources/pop_n_household_census_1971_2011.json")
+(-> (read-census "./resources/pop_n_household_census_1971_2011.csv")
+    (save-as-json "./resources/pop_n_household_census_1971_2011.json"))
+
+
+;; National Population and Household Census 2011 Vdc/Municipality Level
+;; http://data.opennepal.net/content/national-population-and-household-census-2011-vdcmunicipality-level
+
+(defn read-vdc-pop [csv]
+  (let [raw-data (into [] (rest (read-csv csv)))]
+    (letfn [(extract [acc data]
+                     (if (empty? data)
+                       acc
+                       (let [[t m f & more] data
+                             [d vdc _ t-count] t
+                             [_ _ _ m-count] m
+                             [_ _ _ f-count] f
+                             vdc-map {:district   d
+                                      :vdc        vdc
+                                      :households t-count
+                                      :male       m-count
+                                      :female     f-count}]
+                         (recur (conj acc vdc-map) more))))]
+      (extract [] raw-data))))
+
+;(read-vdc-pop "./resources/pop_vdc_as_of_2011.csv")
+(-> (read-vdc-pop "./resources/pop_vdc_as_of_2011.csv")
+    (save-as-json "./resources/pop_vdc_as_of_2011.json"))
