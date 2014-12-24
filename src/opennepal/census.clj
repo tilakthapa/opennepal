@@ -2,9 +2,10 @@
   (:require
     [opennepal.core :refer :all]))
 
-(def url "http://data.opennepal.net/sites/all/modules/pubdlcnt/pubdlcnt.php?file=http://data.opennepal.net/sites/default/files/resources/Population.csv&nid=151")
+;; National population and household census(1971-2011)
+;; http://data.opennepal.net/content/national-population-and-household-census
 
-;; "./resources/census.csv"
+;; "./resources/pop_n_household_census_1971_2011.csv"
 
 ;; finds digits in a string anc converts it into number
 (defn parse-int [s]
@@ -35,6 +36,6 @@
                          (recur (conj acc dt-map) more))))]
       (extract [] raw-data))))
 
-;(read-census "./resources/census.csv")
+;(read-census "./resources/pop_n_household_census_1971_2011.csv")
 
-(save-as-json (read-census "./resources/census.csv") "./resources/census.json")
+(save-as-json (read-census "./resources/pop_n_household_census_1971_2011.csv") "./resources/pop_n_household_census_1971_2011.json")

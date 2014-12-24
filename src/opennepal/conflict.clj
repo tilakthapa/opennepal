@@ -52,7 +52,7 @@
 
 (defn read-conflics
   [csv]
-  (let [raw-data (into [] (read-csv csv))]
+  (let [raw-data (into [] (rest (read-csv csv)))]
     (letfn [(extract [acc data]
                      (if (empty? data)
                        acc
@@ -60,5 +60,5 @@
                          (recur (conj acc (details-map x)) more))))]
       (extract [] raw-data))))
 
-(save-as-json (read-conflics "./resources/conflict.csv") "./resources/conflict.json")
+(save-as-json (read-conflics "./resources/dead_n_missing_during_conflict.csv") "./resources/dead_n_missing_during_conflict.json")
 
